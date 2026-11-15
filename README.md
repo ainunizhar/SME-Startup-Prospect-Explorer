@@ -87,7 +87,47 @@ Draft emails were generated per company, so every batch went through automated c
   the field list and precomputed region / country / sector counts. The page draws its counts and filters from the
   manifest and only loads a country's file when it's opened.
 
+## 6. Power BI version of the dashboards
+
+[`powerbi/`](powerbi/) holds the same five market dashboards rebuilt as **Power BI Projects** (PBIP: the TMDL model,
+Power Query steps and report pages saved as text). One template is built five times:
+
+| Project | Market | Companies | Extra filters |
+|---|---|---|---|
+| [`sme-singapore`](powerbi/sme-singapore/) | Singapore | 1,258 | |
+| [`sme-malaysia`](powerbi/sme-malaysia/) | Malaysia | 324 | |
+| [`sme-dallas`](powerbi/sme-dallas/) | Dallas, US | 884 | |
+| [`sme-emea-fintech`](powerbi/sme-emea-fintech/) | EMEA FinTech | 13,048 | Tier, Country |
+| [`sme-emea`](powerbi/sme-emea/) | Middle East, UK, Europe | 154,568 | Region, Country |
+
+- **One row per company ID.** The source workbooks list some companies under more than one sector, so the
+  Power BI model holds 154,568 companies where the HTML dashboard listed 160,841 rows.
+- **Power Query:** one CSV per market, read through a `DataFolder` parameter (a local folder, or a OneDrive /
+  SharePoint folder URL). Blanks become nulls before typing, so numeric and date columns never fail to load.
+- **Model:** a `Companies` table. Employee and revenue ranges sort by a hidden order column, so "11-50" comes
+  after "1-10", not after "101-250".
+- **Measures:** Companies, Funded Companies, Total Funding ($M), Median Funding ($M), Active %, Countries.
+- **Pages:**
+  - **Companies:** slicers for sector, funding type and size bands, headline cards, and a ranked company table.
+  - **Insights:** companies by sector, employee range, revenue range, last funding type and country (or founding
+    year), plus total funding by sector.
+  - **Company Detail:** a single-select company picker, with profile, funding and description cards.
+
+The CRM notes and decision-maker card of the HTML version are left out, because they hold contact data.
+
+```m
+Source   = Csv.Document(File.Contents(DataFolder & "sme_emea_sme.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+Blanks   = Table.ReplaceValue(Promoted, "", null, Replacer.ReplaceValue, {"Founded Year", "Employee Range Order", ...}),
+Typed    = Table.TransformColumnTypes(Blanks, {{"Company", type text}, ..., {"Total Funding USD", type number}}, "en-US")
+```
+
 ## Data
 
-No data is included in this repository: the company lists, contacts and outreach drafts are private. This page
-describes the method only.
+No data is included in this repository: the company lists, contacts and outreach drafts are private. The Power BI
+projects expect one CSV per market in the `DataFolder` folder, with these columns:
+
+`Company, Market, Region, Country, Sector, Tier, HQ Location, Description, Industries, Industry Groups, Company Type,
+Operating Status, Ownership Status, Founded Year, Employee Range, Employee Range Order, Revenue Range, Revenue Range
+Order, Funding Stage, Last Funding Type, Last Funding Date, Total Funding USD, Funding Rounds, Has Funding, Website,
+CB Rank, Acquisition Status`

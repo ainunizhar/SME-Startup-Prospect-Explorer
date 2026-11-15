@@ -1,0 +1,213 @@
+table Companies
+	lineageTag: c0504021-1d47-543f-9901-181f6c326704
+
+	measure Companies = COUNTROWS ( Companies )
+		formatString: #,0
+		lineageTag: eb302b82-63b1-59eb-b3fa-5a8a068324b6
+
+	measure 'Funded Companies' = CALCULATE ( [Companies], Companies[Has Funding] = "Yes" )
+		formatString: #,0
+		lineageTag: 5b763bbd-9f8a-5c4e-8c05-72b6599d5aba
+
+	measure 'Total Funding ($M)' = DIVIDE ( SUM ( Companies[Total Funding USD] ), 1000000 )
+		formatString: #,0.0
+		lineageTag: 0001bb1a-a7ec-5455-b52a-2713692f20dd
+
+	measure 'Median Funding ($M)' = DIVIDE ( MEDIANX ( FILTER ( Companies, NOT ISBLANK ( Companies[Total Funding USD] ) ), Companies[Total Funding USD] ), 1000000 )
+		formatString: #,0.00
+		lineageTag: 3ff2a631-1234-5a20-afff-ba077076c6fc
+
+	measure 'Active %' = DIVIDE ( CALCULATE ( [Companies], Companies[Operating Status] = "Active" ), [Companies] )
+		formatString: 0%
+		lineageTag: ade5be01-939d-5ce3-908a-1f16eb69289a
+
+	measure Countries = DISTINCTCOUNT ( Companies[Country] )
+		formatString: #,0
+		lineageTag: f49c9132-20aa-54b7-939f-b8144107f0b8
+
+	column Company
+		dataType: string
+		lineageTag: 7d819afa-7dfd-521a-95b9-fad3bb759733
+		summarizeBy: none
+		sourceColumn: Company
+
+	column Market
+		dataType: string
+		lineageTag: b16b9fd1-9c8a-5b19-b102-eee148845257
+		summarizeBy: none
+		sourceColumn: Market
+
+	column Region
+		dataType: string
+		lineageTag: 90f5486b-27ab-5fa7-a447-53b0592c9405
+		summarizeBy: none
+		sourceColumn: Region
+
+	column Country
+		dataType: string
+		lineageTag: a1056137-5de1-5c9d-b1aa-a2b355507a34
+		summarizeBy: none
+		sourceColumn: Country
+
+	column Sector
+		dataType: string
+		lineageTag: 14f8eb3e-d13b-516c-b99b-5d1d1c0589f4
+		summarizeBy: none
+		sourceColumn: Sector
+
+	column Tier
+		dataType: string
+		lineageTag: 3bd0f358-9440-54a3-8d74-2feb5630afed
+		summarizeBy: none
+		sourceColumn: Tier
+
+	column 'HQ Location'
+		dataType: string
+		lineageTag: 35992f89-3b2c-5341-8c01-42684157765d
+		summarizeBy: none
+		sourceColumn: HQ Location
+
+	column Description
+		dataType: string
+		lineageTag: 782afa72-83dc-50bc-a1f6-e1f6880da4df
+		summarizeBy: none
+		sourceColumn: Description
+
+	column Industries
+		dataType: string
+		lineageTag: 5ca0a5d0-9503-5803-9e26-562b475587f7
+		summarizeBy: none
+		sourceColumn: Industries
+
+	column 'Industry Groups'
+		dataType: string
+		lineageTag: 2158c36d-860e-55cb-9bbd-a02a5dd70e0c
+		summarizeBy: none
+		sourceColumn: Industry Groups
+
+	column 'Company Type'
+		dataType: string
+		lineageTag: 48ac3da7-f876-5a77-81d3-8a303aab3872
+		summarizeBy: none
+		sourceColumn: Company Type
+
+	column 'Operating Status'
+		dataType: string
+		lineageTag: b2450c5d-bb25-5b0c-9889-e88d2dd3bae8
+		summarizeBy: none
+		sourceColumn: Operating Status
+
+	column 'Ownership Status'
+		dataType: string
+		lineageTag: d381bd35-8ace-57d0-a989-f8747df1079e
+		summarizeBy: none
+		sourceColumn: Ownership Status
+
+	column 'Founded Year'
+		dataType: int64
+		formatString: 0
+		lineageTag: 08d414bb-52d5-5cfa-9268-e3f18f9a4633
+		summarizeBy: none
+		sourceColumn: Founded Year
+
+	column 'Employee Range'
+		dataType: string
+		lineageTag: 2b2e4b4f-bdeb-5a20-9cbe-4979e425688a
+		summarizeBy: none
+		sourceColumn: Employee Range
+		sortByColumn: 'Employee Range Order'
+
+	column 'Employee Range Order'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 5279b9b0-7820-5d5e-90c6-23666b120573
+		summarizeBy: none
+		sourceColumn: Employee Range Order
+
+	column 'Revenue Range'
+		dataType: string
+		lineageTag: c5ecb79b-c6c5-536f-8585-bee5d137501a
+		summarizeBy: none
+		sourceColumn: Revenue Range
+		sortByColumn: 'Revenue Range Order'
+
+	column 'Revenue Range Order'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: ef7f390b-6e03-5a38-8559-0e5d430c98e2
+		summarizeBy: none
+		sourceColumn: Revenue Range Order
+
+	column 'Funding Stage'
+		dataType: string
+		lineageTag: 597b9bc4-c686-5595-9de2-01680614fa82
+		summarizeBy: none
+		sourceColumn: Funding Stage
+
+	column 'Last Funding Type'
+		dataType: string
+		lineageTag: 3e8637a8-eac0-5977-ba6a-c261b6ea3bc5
+		summarizeBy: none
+		sourceColumn: Last Funding Type
+
+	column 'Last Funding Date'
+		dataType: dateTime
+		formatString: dd mmm yyyy
+		lineageTag: 4bc06be3-a3d5-5179-9ed9-653dda2ef010
+		summarizeBy: none
+		sourceColumn: Last Funding Date
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Total Funding USD'
+		dataType: double
+		formatString: #,0.##
+		lineageTag: e5a5de5b-9342-5c56-a57d-714c0779b6ac
+		summarizeBy: none
+		sourceColumn: Total Funding USD
+
+	column 'Funding Rounds'
+		dataType: int64
+		formatString: 0
+		lineageTag: 2fb5db42-1c36-5478-91f1-699758807b07
+		summarizeBy: none
+		sourceColumn: Funding Rounds
+
+	column 'Has Funding'
+		dataType: string
+		lineageTag: 2e794e81-f6e1-5640-bf09-fde3491f8d6c
+		summarizeBy: none
+		sourceColumn: Has Funding
+
+	column Website
+		dataType: string
+		lineageTag: 403e04ef-44bf-5abf-8df3-ac5aa96f14a4
+		summarizeBy: none
+		sourceColumn: Website
+
+	column 'CB Rank'
+		dataType: string
+		lineageTag: f7909c09-a773-551b-949b-dd50babd3df0
+		summarizeBy: none
+		sourceColumn: CB Rank
+
+	column 'Acquisition Status'
+		dataType: string
+		lineageTag: aa19bfdd-dff3-5c79-b0e1-f50f996b4a06
+		summarizeBy: none
+		sourceColumn: Acquisition Status
+
+	partition Companies = m
+		mode: import
+		source =
+				let
+				    Source = Csv.Document(File.Contents(DataFolder & "sme_emea_fintech.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
+				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
+				    Blanks = Table.ReplaceValue(Promoted, "", null, Replacer.ReplaceValue, {"Founded Year", "Employee Range Order", "Revenue Range Order", "Last Funding Date", "Total Funding USD", "Funding Rounds"}),
+				    Typed = Table.TransformColumnTypes(Blanks, {{"Company", type text}, {"Market", type text}, {"Region", type text}, {"Country", type text}, {"Sector", type text}, {"Tier", type text}, {"HQ Location", type text}, {"Description", type text}, {"Industries", type text}, {"Industry Groups", type text}, {"Company Type", type text}, {"Operating Status", type text}, {"Ownership Status", type text}, {"Founded Year", Int64.Type}, {"Employee Range", type text}, {"Employee Range Order", Int64.Type}, {"Revenue Range", type text}, {"Revenue Range Order", Int64.Type}, {"Funding Stage", type text}, {"Last Funding Type", type text}, {"Last Funding Date", type date}, {"Total Funding USD", type number}, {"Funding Rounds", Int64.Type}, {"Has Funding", type text}, {"Website", type text}, {"CB Rank", type text}, {"Acquisition Status", type text}}, "en-US")
+				in
+				    Typed
+
+	annotation PBI_ResultType = Table

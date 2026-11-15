@@ -1,0 +1,47 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.4.0/schema.json",
+  "name": "co_title",
+  "position": {
+    "x": 20,
+    "y": 10,
+    "z": 0,
+    "width": 490,
+    "height": 70,
+    "tabOrder": 0
+  },
+  "visual": {
+    "visualType": "textbox",
+    "objects": {
+      "general": [
+        {
+          "properties": {
+            "paragraphs": [
+              {
+                "textRuns": [
+                  {
+                    "value": "EMEA SME Target Companies (Middle East, UK, Europe)",
+                    "textStyle": {
+                      "fontSize": "20pt",
+                      "fontWeight": "bold"
+                    }
+                  }
+                ]
+              },
+              {
+                "textRuns": [
+                  {
+                    "value": "154,568 companies · 3,283 with disclosed funding · sectors: Accounting, Education, Healthcare, Hospitality, ISO Manufacturing, Legal, Oil and Gas, Pro",
+                    "textStyle": {
+                      "fontSize": "11pt",
+                      "color": "#5B6670"
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
