@@ -11,7 +11,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "PortfolioTheme",
+      "name": "ProspectRadarMalaysia",
       "reportVersionAtImport": {
         "visual": "1.8.50",
         "report": "2.0.50",
@@ -37,9 +37,14 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "PortfolioTheme",
-          "path": "PortfolioTheme.json",
+          "name": "ProspectRadarMalaysia",
+          "path": "ProspectRadarMalaysia.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "ProspectRadarMalaysia_dashboard.png",
+          "path": "ProspectRadarMalaysia_dashboard.png",
+          "type": "Image"
         }
       ]
     }

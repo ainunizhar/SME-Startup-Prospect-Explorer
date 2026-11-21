@@ -25,6 +25,31 @@ table Companies
 		formatString: #,0
 		lineageTag: f49c9132-20aa-54b7-939f-b8144107f0b8
 
+	measure 'Founded 2020+' = CALCULATE ( [Companies], Companies[Founded Year] >= 2020 )
+		formatString: #,0
+		lineageTag: 07d650f0-c19c-5a6a-8a89-b00d5dba4970
+
+	measure 'Company Name' = SELECTEDVALUE ( Companies[Company], "Several companies" )
+		lineageTag: f06fd8d1-3334-5c65-8a10-46093143deda
+
+	measure 'KPI Sub Companies' = "in " & FORMAT ( [Countries] + 0, "#,0" ) & " countries"
+		lineageTag: 45353a42-52b2-5942-a162-c1a87b4470e9
+
+	measure 'KPI Sub Funded' = FORMAT ( DIVIDE ( [Funded Companies], [Companies] ), "0%" ) & " have disclosed funding"
+		lineageTag: c86691ba-5373-5812-9e48-df7a6cc278d6
+
+	measure 'KPI Sub Total' = "across " & FORMAT ( [Funded Companies] + 0, "#,0" ) & " funded companies"
+		lineageTag: b1b7c2db-a677-5331-80a7-9ab6b8d80b27
+
+	measure 'KPI Sub Median' = "per funded company (US$ millions)"
+		lineageTag: 3812e28d-fb18-56ae-9334-44a7ebc1db91
+
+	measure 'KPI Sub Active' = FORMAT ( CALCULATE ( [Companies], Companies[Operating Status] <> "Active" ) + 0, "#,0" ) & " closed"
+		lineageTag: 05ac05c5-05a6-5589-82b0-af8ab1185515
+
+	measure 'KPI Sub Young' = FORMAT ( DIVIDE ( [Founded 2020+], [Companies] ), "0%" ) & " founded in 2020 or later"
+		lineageTag: 20f89ada-5d8a-5a19-8fa4-f7b7141da6a3
+
 	column Company
 		dataType: string
 		lineageTag: 7d819afa-7dfd-521a-95b9-fad3bb759733
@@ -163,7 +188,7 @@ table Companies
 
 	column 'Total Funding USD'
 		dataType: double
-		formatString: #,0.##
+		formatString: \$#,0
 		lineageTag: e5a5de5b-9342-5c56-a57d-714c0779b6ac
 		summarizeBy: none
 		sourceColumn: Total Funding USD
@@ -199,6 +224,21 @@ table Companies
 		summarizeBy: none
 		sourceColumn: Acquisition Status
 
+	column 'Funding Stage Group'
+		dataType: string
+		lineageTag: ab303085-cf83-583a-a3b9-c8ef107975a4
+		summarizeBy: none
+		sourceColumn: Funding Stage Group
+		sortByColumn: 'Stage Order'
+
+	column 'Stage Order'
+		dataType: int64
+		formatString: 0
+		isHidden
+		lineageTag: 194b069a-8a21-5db6-9019-5aa68ee7a7c9
+		summarizeBy: none
+		sourceColumn: Stage Order
+
 	partition Companies = m
 		mode: import
 		source =
@@ -206,8 +246,24 @@ table Companies
 				    Source = Csv.Document(File.Contents(DataFolder & "sme_emea_fintech.csv"), [Delimiter = ",", Encoding = 65001, QuoteStyle = QuoteStyle.Csv]),
 				    Promoted = Table.PromoteHeaders(Source, [PromoteAllScalars = true]),
 				    Blanks = Table.ReplaceValue(Promoted, "", null, Replacer.ReplaceValue, {"Founded Year", "Employee Range Order", "Revenue Range Order", "Last Funding Date", "Total Funding USD", "Funding Rounds"}),
-				    Typed = Table.TransformColumnTypes(Blanks, {{"Company", type text}, {"Market", type text}, {"Region", type text}, {"Country", type text}, {"Sector", type text}, {"Tier", type text}, {"HQ Location", type text}, {"Description", type text}, {"Industries", type text}, {"Industry Groups", type text}, {"Company Type", type text}, {"Operating Status", type text}, {"Ownership Status", type text}, {"Founded Year", Int64.Type}, {"Employee Range", type text}, {"Employee Range Order", Int64.Type}, {"Revenue Range", type text}, {"Revenue Range Order", Int64.Type}, {"Funding Stage", type text}, {"Last Funding Type", type text}, {"Last Funding Date", type date}, {"Total Funding USD", type number}, {"Funding Rounds", Int64.Type}, {"Has Funding", type text}, {"Website", type text}, {"CB Rank", type text}, {"Acquisition Status", type text}}, "en-US")
+				    Typed = Table.TransformColumnTypes(Blanks, {{"Company", type text}, {"Market", type text}, {"Region", type text}, {"Country", type text}, {"Sector", type text}, {"Tier", type text}, {"HQ Location", type text}, {"Description", type text}, {"Industries", type text}, {"Industry Groups", type text}, {"Company Type", type text}, {"Operating Status", type text}, {"Ownership Status", type text}, {"Founded Year", Int64.Type}, {"Employee Range", type text}, {"Employee Range Order", Int64.Type}, {"Revenue Range", type text}, {"Revenue Range Order", Int64.Type}, {"Funding Stage", type text}, {"Last Funding Type", type text}, {"Last Funding Date", type date}, {"Total Funding USD", type number}, {"Funding Rounds", Int64.Type}, {"Has Funding", type text}, {"Website", type text}, {"CB Rank", type text}, {"Acquisition Status", type text}}, "en-US"),
+
+				    Stage = Table.AddColumn(Typed, "Funding Stage Group", each
+				        let t = if [Last Funding Type] = null then "" else Text.Lower([Last Funding Type]) in
+				        if t = "" then "No round recorded"
+				        else if Text.Contains(t, "pre-seed") or Text.Contains(t, "pre seed") then "Pre-seed"
+				        else if Text.Contains(t, "seed") or Text.Contains(t, "angel") then "Seed"
+				        else if Text.Contains(t, "series a") then "Series A"
+				        else if Text.Contains(t, "series b") then "Series B"
+				        else if Text.Contains(t, "series c") or Text.Contains(t, "series d") or Text.Contains(t, "series e")
+				             or Text.Contains(t, "series f") or Text.Contains(t, "series g") or Text.Contains(t, "series h") then "Series C+"
+				        else "Other (grant, debt, PE, ...)", type text),
+				    StageOrder = Table.AddColumn(Stage, "Stage Order", each List.PositionOf(
+				        {"Pre-seed", "Seed", "Series A", "Series B", "Series C+", "Other (grant, debt, PE, ...)", "No round recorded"},
+				        [Funding Stage Group]) + 1, Int64.Type),
+				    RevLabel = Table.ReplaceValue(StageOrder, "", "Not disclosed", Replacer.ReplaceValue, {"Revenue Range"}),
+				    RevOrder = Table.ReplaceValue(RevLabel, null, 99, Replacer.ReplaceValue, {"Revenue Range Order"})
 				in
-				    Typed
+				    RevOrder
 
 	annotation PBI_ResultType = Table

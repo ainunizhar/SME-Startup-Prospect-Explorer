@@ -11,7 +11,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "PortfolioTheme",
+      "name": "ProspectRadarEMEA",
       "reportVersionAtImport": {
         "visual": "1.8.50",
         "report": "2.0.50",
@@ -37,9 +37,14 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "PortfolioTheme",
-          "path": "PortfolioTheme.json",
+          "name": "ProspectRadarEMEA",
+          "path": "ProspectRadarEMEA.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "ProspectRadarEMEA_dashboard.png",
+          "path": "ProspectRadarEMEA_dashboard.png",
+          "type": "Image"
         }
       ]
     }

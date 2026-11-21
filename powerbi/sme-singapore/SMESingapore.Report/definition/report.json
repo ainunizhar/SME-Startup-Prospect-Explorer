@@ -11,7 +11,7 @@
       "type": "SharedResources"
     },
     "customTheme": {
-      "name": "PortfolioTheme",
+      "name": "ProspectRadarSingapore",
       "reportVersionAtImport": {
         "visual": "1.8.50",
         "report": "2.0.50",
@@ -37,9 +37,14 @@
       "type": "RegisteredResources",
       "items": [
         {
-          "name": "PortfolioTheme",
-          "path": "PortfolioTheme.json",
+          "name": "ProspectRadarSingapore",
+          "path": "ProspectRadarSingapore.json",
           "type": "CustomTheme"
+        },
+        {
+          "name": "ProspectRadarSingapore_dashboard.png",
+          "path": "ProspectRadarSingapore_dashboard.png",
+          "type": "Image"
         }
       ]
     }
