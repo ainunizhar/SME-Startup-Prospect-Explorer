@@ -21,9 +21,9 @@ Dallas 884, EMEA FinTech 13,048 and EMEA SME 154,568 companies.
   Some companies sit under several sectors, so the EMEA SME explorer holds 154,568 unique companies where the
   original HTML dashboard listed 160,841 rows.
 - **Fit scoring.** Hard exclusions first (public, acquired or closed companies, non-profits, investment firms), then
-  simple points, for example early-stage funding +4, mature stage −10, team of 11–50 +4.
+  simple points, for example early-stage funding +4, mature stage −10, team of 11-50 +4.
 - **Verify before effort.** Research ran in rounds down the ranked list. Later batches were web-verified before any
-  contact credit was spent, and LLM-written outreach was checked automatically (90–175 words, exactly one ask, no
+  contact credit was spent, and LLM-written outreach was checked automatically (90-175 words, exactly one ask, no
   phrase reused in more than 3 of 50 emails).
 - **Power BI.** One CSV per market through a `DataFolder` parameter. Blanks become nulls before typing, and size and
   revenue ranges sort by a hidden order column. The 1920×1080 background artboard and theme are generated in Python.
